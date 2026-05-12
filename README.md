@@ -1,16 +1,425 @@
-# React + Vite
+# Job Hunt Tracker 🚀
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A full-stack AI-powered Job Hunt Tracker application that helps users manage job applications, track interview progress, organize resumes, and automate parts of the job search process.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+# 📌 Features
 
-## React Compiler
+## 👤 Authentication
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+* User Registration & Login
+* JWT Authentication
+* Secure Password Hashing
+* Protected Routes
 
-## Expanding the ESLint configuration
+## 💼 Job Management
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+* Add New Job Applications
+* Update Job Status
+* Delete Applications
+* Track Interview Stages
+* Store Company Details
+* Application Timeline Tracking
+
+## 🤖 AI Features
+
+* AI Resume Assistance
+* AI Job Suggestions
+* AI Content Generation
+* OpenAI API Integration
+
+## 🔔 Notifications
+
+* Real-time Notifications
+* Application Updates
+* Reminder System
+
+## 📊 Dashboard
+
+* Job Statistics
+* Status Analytics
+* Application Overview
+* Progress Monitoring
+
+---
+
+# 🛠️ Tech Stack
+
+## Frontend
+
+* React.js
+* React Router DOM
+* Axios
+* Tailwind CSS
+* Lucide React
+
+## Backend
+
+* Node.js
+* Express.js
+* MongoDB
+* Mongoose
+* bcrypt.js
+
+## AI Integration
+
+* OpenAI API
+
+---
+
+# 📂 Project Structure
+
+```bash
+job-tracker/
+│
+├── frontend/
+│   ├── public/
+│   ├── src/
+│   │   ├── components/
+│   │   ├── pages/
+│   │   ├── services/
+│   │   ├── context/
+│   │   └── App.js
+│   └── package.json
+│
+├── backend/
+│   ├── telethon_service/
+│   ├── models/
+│   ├── routes/
+│   ├── config/
+│   ├── server.js
+│   └── package.json
+│
+├── .gitignore
+├── README.md
+└── package.json
+```
+
+---
+
+# ⚙️ Installation
+
+## 1️⃣ Clone Repository
+
+```bash
+git clone https://github.com/YOUR_USERNAME/Job_Hunt.git
+cd Job_Hunt
+```
+
+---
+
+## 2️⃣ Install Frontend Dependencies
+
+```bash
+cd frontend
+npm install
+```
+
+---
+
+## 3️⃣ Install Backend Dependencies
+
+```bash
+cd ../backend
+npm install
+```
+
+---
+
+# 🔐 Environment Variables
+
+Create a `.env` file inside the backend folder.
+
+```env
+PORT=5000
+MONGO_URI=your_mongodb_connection
+JWT_SECRET=your_jwt_secret
+OPENAI_API_KEY=your_openai_api_key
+```
+
+⚠️ Never upload your `.env` file to GitHub.
+
+---
+
+# ▶️ Running the Project
+
+## Start Backend
+
+```bash
+cd backend
+npm start
+```
+
+---
+
+## Start Frontend
+
+```bash
+cd frontend
+npm start
+```
+
+Frontend runs on:
+
+```bash
+http://localhost:3000
+```
+
+Backend runs on:
+
+```bash
+http://localhost:5000
+```
+
+---
+
+# 📡 API Endpoints
+
+## Authentication
+
+| Method | Endpoint           | Description   |
+| ------ | ------------------ | ------------- |
+| POST   | /api/auth/register | Register User |
+| POST   | /api/auth/login    | Login User    |
+
+---
+
+## Jobs
+
+| Method | Endpoint      | Description  |
+| ------ | ------------- | ------------ |
+| GET    | /api/jobs     | Get All Jobs |
+| POST   | /api/jobs     | Create Job   |
+| PUT    | /api/jobs/:id | Update Job   |
+| DELETE | /api/jobs/:id | Delete Job   |
+
+---
+
+# 🧠 AI Features
+
+The application integrates with the OpenAI API to:
+
+* Generate resume improvements
+* Suggest job descriptions
+* Create interview preparation content
+* Assist in job search automation
+
+---
+
+# 🔒 Security Features
+
+* JWT Token Authentication
+* Password Encryption
+* Environment Variable Protection
+* Secure API Access
+* Protected Routes
+
+---
+
+# 🚀 Deployment
+
+## 🌐 Frontend Deployment (Vercel)
+
+1. Push frontend code to GitHub
+2. Go to:
+
+[https://vercel.com](https://vercel.com)
+
+3. Import your GitHub repository
+4. Select the frontend folder
+5. Add environment variables if needed
+6. Click Deploy
+
+---
+
+## ⚙️ Backend Deployment (Render)
+
+### 1️⃣ Push Backend to GitHub
+
+Make sure your backend folder contains:
+
+```bash
+package.json
+server.js
+.env (NOT pushed)
+```
+
+---
+
+### 2️⃣ Create Render Account
+
+Go to:
+
+[https://render.com](https://render.com)
+
+Login using GitHub.
+
+---
+
+### 3️⃣ Create New Web Service
+
+* Click "New +"
+* Select "Web Service"
+* Connect your GitHub repository
+* Select your Job_Hunt repository
+
+---
+
+### 4️⃣ Configure Render Settings
+
+| Setting        | Value            |
+| -------------- | ---------------- |
+| Name           | job-hunt-backend |
+| Environment    | Node             |
+| Root Directory | backend          |
+| Build Command  | npm install      |
+| Start Command  | npm start        |
+
+---
+
+### 5️⃣ Add Environment Variables
+
+Inside Render Dashboard → Environment Variables:
+
+```env
+PORT=5000
+MONGO_URI=your_mongodb_connection
+OPENAI_API_KEY=your_openai_api_key
+```
+
+---
+
+### 6️⃣ Deploy Backend
+
+Click:
+
+```bash
+Create Web Service
+```
+
+Render will automatically:
+
+* Install dependencies
+* Build project
+* Start backend server
+
+---
+
+### 7️⃣ Backend Live URL
+
+Example:
+
+```bash
+https://job-hunt-backend.onrender.com
+```
+
+---
+
+## 🗄️ Database Deployment
+
+### MongoDB Atlas
+
+1. Create free cluster
+2. Create database user
+3. Whitelist IP:
+
+```bash
+0.0.0.0/0
+```
+
+4. Copy MongoDB connection string
+5. Add it inside Render Environment Variables
+
+---
+
+## 🔗 Connect Frontend to Backend
+
+Inside frontend `.env`:
+
+```env
+REACT_APP_API_URL=https://job-hunt-backend.onrender.com
+```
+
+---
+
+## ⚠️ Important Deployment Notes
+
+* Never upload `.env` files to GitHub
+* Keep API keys private
+* Use HTTPS APIs only
+* Enable CORS in backend
+* Add `node_modules/` to `.gitignore`
+
+---
+
+## 🧩 Recommended Deployment Stack
+
+| Service        | Platform      |
+| -------------- | ------------- |
+| Frontend       | Vercel        |
+| Backend        | Render        |
+| Database       | MongoDB Atlas |
+| Authentication | JWT           |
+| AI Services    | OpenAI API    |
+
+---
+
+## Database
+
+* MongoDB Atlas
+
+---
+
+# 📸 Screenshots
+
+Add your project screenshots here.
+
+```md
+/screenshots/dashboard.png
+/screenshots/login.png
+/screenshots/job.png
+```
+
+---
+
+# 🧪 Future Enhancements
+
+* Resume Parsing
+* LinkedIn Integration
+* Email Automation
+* AI Interview Bot
+* Mobile Application
+* Advanced Analytics
+
+---
+
+# 🤝 Contributing
+
+Contributions are welcome.
+
+1. Fork the repository
+2. Create a new branch
+3. Commit your changes
+4. Push to your branch
+5. Open a Pull Request
+
+---
+
+# 📄 License
+
+This project is licensed under the MIT License.
+
+---
+
+# 👨‍💻 Author
+
+Developed by Sreelatha Budda
+
+GitHub: [https://github.com/buddasreelatha57](https://github.com/buddasreelatha57)
+
+---
+
+# ⭐ Support
+
+If you like this project, please give it a star on GitHub ⭐
