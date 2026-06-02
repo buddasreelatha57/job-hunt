@@ -4,71 +4,30 @@ import {
   MessageCircle
 } from "lucide-react";
 
+import { getUser } from "../auth";
+
 export default function Navbar({ collapsed }) {
 
   const [open, setOpen] = useState(false);
-
-  const [user, setUser] = useState({
-    name: "",
-    email: "",
-    photo: "",
-    profession: "",
-    websites: []
-  });
+  const [user, setUser] = useState(null);
 
   // =========================
-  // LOAD USER SAFELY
+  // LIVE USER SYNC
   // =========================
   useEffect(() => {
 
     const loadUser = () => {
-
-      try {
-
-        const saved = localStorage.getItem("user");
-
-        // NO USER
-        if (!saved || saved === "undefined") {
-
-          setUser({
-            name: "",
-            email: "",
-            photo: "",
-            profession: "",
-            websites: []
-          });
-
-          return;
-        }
-
-        // SAFE JSON
-        const parsedUser = JSON.parse(saved);
-
-        setUser(parsedUser);
-
-      } catch (error) {
-
-        console.log("Invalid user data");
-
-        setUser({
-          name: "",
-          email: "",
-          photo: "",
-          profession: "",
-          websites: []
-        });
-
-      }
+      setUser(getUser());
     };
 
-    // INITIAL LOAD
+    // initial load
     loadUser();
 
-    // STORAGE UPDATE
-    window.addEventListener("storage", loadUser);
+    // update when login/logout happens
+    window.addEventListener("authChange", loadUser);
 
     return () => {
-      window.removeEventListener("storage", loadUser);
+      window.removeEventListener("authChange", loadUser);
     };
 
   }, []);
@@ -98,43 +57,18 @@ export default function Navbar({ collapsed }) {
         `}
       >
 
-        {/* RIGHT */}
         <div className="flex items-center gap-4">
 
           {/* NOTIFICATION */}
-          <div className="relative">
-
-            <Bell
-              size={22}
-              className="
-                cursor-pointer
-                text-gray-700 dark:text-white
-                hover:text-pink-500
-                dark:hover:text-teal-400
-                transition
-              "
-            />
-
-            <span
-              className="
-                absolute -top-1 -right-1
-                w-2 h-2 rounded-full
-                bg-red-500
-              "
-            />
-
-          </div>
+          <Bell
+            size={22}
+            className="cursor-pointer text-gray-700 dark:text-white"
+          />
 
           {/* MESSAGE */}
           <MessageCircle
             size={22}
-            className="
-              cursor-pointer
-              text-gray-700 dark:text-white
-              hover:text-purple-500
-              dark:hover:text-teal-400
-              transition
-            "
+            className="cursor-pointer text-gray-700 dark:text-white"
           />
 
           {/* THEME TOGGLE */}
@@ -146,16 +80,12 @@ export default function Navbar({ collapsed }) {
               p-1
               flex items-center
               cursor-pointer
-              transition
 
               bg-gradient-to-r
               from-pink-500 to-purple-600
-
-              dark:from-teal-500
-              dark:to-cyan-500
+              dark:from-teal-500 dark:to-cyan-500
             "
           >
-
             <div
               className="
                 w-5 h-5 rounded-full
@@ -164,13 +94,12 @@ export default function Navbar({ collapsed }) {
                 dark:translate-x-7
               "
             />
-
           </div>
 
           {/* PROFILE */}
           <div className="relative">
 
-            {/* PROFILE BUTTON */}
+            {/* AVATAR */}
             <div
               onClick={() => setOpen(!open)}
               className="
@@ -183,35 +112,27 @@ export default function Navbar({ collapsed }) {
                 text-white font-bold
                 cursor-pointer
                 overflow-hidden
-
-                border-2 border-white
-                dark:border-gray-800
               "
             >
 
               {user?.photo ? (
-
                 <img
                   src={user.photo}
                   alt="profile"
                   className="w-full h-full object-cover"
                 />
-
               ) : (
-
                 <span>
                   {user?.name
                     ? user.name.charAt(0).toUpperCase()
-                    : "U"}
+                    : "G"}
                 </span>
-
               )}
 
             </div>
 
             {/* DROPDOWN */}
             {open && (
-
               <div
                 className="
                   absolute right-0 mt-3
@@ -228,19 +149,16 @@ export default function Navbar({ collapsed }) {
                 "
               >
 
-                {/* TOP */}
+                {/* USER INFO */}
                 <div className="text-center">
 
                   <div
                     className="
-                      w-20 h-20 rounded-full
-                      mx-auto
+                      w-20 h-20 rounded-full mx-auto
 
                       bg-gradient-to-r
                       from-pink-500 to-purple-600
-
-                      dark:from-teal-500
-                      dark:to-cyan-500
+                      dark:from-teal-500 dark:to-cyan-500
 
                       flex items-center justify-center
                       text-white text-3xl font-bold
@@ -249,21 +167,17 @@ export default function Navbar({ collapsed }) {
                   >
 
                     {user?.photo ? (
-
                       <img
                         src={user.photo}
                         alt="profile"
                         className="w-full h-full object-cover"
                       />
-
                     ) : (
-
                       <span>
                         {user?.name
                           ? user.name.charAt(0).toUpperCase()
-                          : "U"}
+                          : "G"}
                       </span>
-
                     )}
 
                   </div>
@@ -276,154 +190,58 @@ export default function Navbar({ collapsed }) {
                     {user?.email || "Not Logged In"}
                   </p>
 
-                  <p className="text-xs text-purple-500 dark:text-teal-400 mt-1">
-                    {user?.profession || "Job Seeker"}
-                  </p>
-
                 </div>
 
-                {/* WEBSITES */}
-                {user?.websites?.length > 0 && (
+                {/* STATUS BUTTON */}
+                {/* STATUS BUTTON */}
+<div className="mt-5">
 
-                  <div className="mt-4">
+  {!user?.email ? (
 
-                    <p className="font-semibold text-sm dark:text-white mb-2">
-                      Websites
-                    </p>
+    <button
+      onClick={() => window.location.href = "/login"}
+      className="
+        w-full py-3 rounded-xl font-semibold text-white
 
-                    <div className="flex flex-col gap-2">
+        bg-gradient-to-r
+        from-pink-500 to-purple-600
+        dark:from-teal-500 dark:to-cyan-500
 
-                      {user.websites.map((site, i) => (
+        shadow-lg
+        hover:scale-[1.02]
+        transition-all duration-200
+      "
+    >
+      Login
+    </button>
 
-                        <div
-                          key={i}
-                          className="
-                            flex items-center justify-between
-                            bg-gray-100 dark:bg-gray-800
-                            px-3 py-2 rounded-xl
-                          "
-                        >
+  ) : (
 
-                          <a
-                            href={site}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="
-                              text-blue-500 text-sm
-                              truncate hover:underline
-                            "
-                          >
-                            {site}
-                          </a>
+    <button
+      onClick={() => {
+        localStorage.removeItem("user");
+        window.dispatchEvent(new Event("authChange"));
+        window.location.href = "/login";
+      }}
+      className="
+        w-full py-3 rounded-xl font-semibold text-white
 
-                          <button
-                            onClick={() => {
+        bg-gradient-to-r
+        from-pink-500 to-purple-600
+        dark:from-teal-500 dark:to-cyan-500
 
-                              const updated = {
-                                ...user,
-                                websites: user.websites.filter(
-                                  (_, index) => index !== i
-                                )
-                              };
+        shadow-lg
+        hover:scale-[1.02]
+        transition-all duration-200
+      "
+    >
+      Logout
+    </button>
 
-                              setUser(updated);
+  )}
 
-                              localStorage.setItem(
-                                "user",
-                                JSON.stringify(updated)
-                              );
-                            }}
-                            className="
-                              text-red-500 text-xs
-                              hover:scale-110 transition
-                            "
-                          >
-                            ✕
-                          </button>
-
-                        </div>
-
-                      ))}
-
-                    </div>
-
-                  </div>
-
-                )}
-
-                {/* BUTTONS */}
-                <div className="flex flex-col gap-2 mt-5">
-
-                  {/* EDIT PROFILE */}
-                  <button
-                    onClick={() => {
-
-                      if (!user?.email) {
-
-                        alert("Please Login First 🚀");
-
-                        window.location.href = "/login";
-
-                        return;
-                      }
-
-                      window.location.href = "/profile";
-                    }}
-                    className="
-                      w-full py-2 rounded-xl
-
-                      bg-gradient-to-r
-                      from-pink-500 to-purple-600
-
-                      dark:from-teal-500
-                      dark:to-cyan-500
-
-                      text-white font-medium
-                    "
-                  >
-                    Edit Profile
-                  </button>
-
-                  {/* LOGIN / LOGOUT */}
-                  {!user?.email ? (
-
-                    <button
-                      onClick={() => {
-                        window.location.href = "/login";
-                      }}
-                      className="
-                        w-full py-2 rounded-xl
-                        bg-gray-200 dark:bg-gray-700
-                        dark:text-white
-                      "
-                    >
-                      Login / Signup
-                    </button>
-
-                  ) : (
-
-                    <button
-                      onClick={() => {
-
-                        localStorage.removeItem("user");
-
-                        window.location.href = "/login";
-                      }}
-                      className="
-                        w-full py-2 rounded-xl
-                        bg-gray-200 dark:bg-gray-700
-                        dark:text-white
-                      "
-                    >
-                      Logout
-                    </button>
-
-                  )}
-
-                </div>
-
+</div>
               </div>
-
             )}
 
           </div>
