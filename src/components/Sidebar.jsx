@@ -1,4 +1,3 @@
-
 import { NavLink, useNavigate } from "react-router-dom";
 import {
   User,
@@ -12,6 +11,7 @@ import {
 } from "lucide-react";
 
 import logo from "../assets/logo.jpeg";
+import { useEffect, useState } from "react";
 
 export default function Sidebar({
   mobileOpen,
@@ -21,15 +21,34 @@ export default function Sidebar({
 }) {
 
   const navigate = useNavigate();
+  const [user, setUser] = useState(null);
 
-  // SAFE USER
-  let user = null;
+  // =========================
+  // LOAD + SYNC USER
+  // =========================
+  useEffect(() => {
 
-  try {
-    user = JSON.parse(localStorage.getItem("user"));
-  } catch {
-    user = null;
-  }
+    const loadUser = () => {
+      try {
+        const saved = localStorage.getItem("user");
+        setUser(saved ? JSON.parse(saved) : null);
+      } catch {
+        setUser(null);
+      }
+    };
+
+    loadUser();
+
+    // 🔥 IMPORTANT: sync with navbar instantly
+    window.addEventListener("authChange", loadUser);
+    window.addEventListener("storage", loadUser);
+
+    return () => {
+      window.removeEventListener("authChange", loadUser);
+      window.removeEventListener("storage", loadUser);
+    };
+
+  }, []);
 
   const menu = [
     { name: "Jobs", path: "/", icon: <Briefcase size={18} /> },
@@ -39,6 +58,18 @@ export default function Sidebar({
     { name: "Profile", path: "/profile", icon: <User size={18} /> },
     { name: "Resume", path: "/resume", icon: <FileText size={18} /> },
   ];
+
+  // =========================
+  // LOGOUT
+  // =========================
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+
+    // 🔥 sync all components instantly
+    window.dispatchEvent(new Event("authChange"));
+
+    navigate("/login");
+  };
 
   return (
     <>
@@ -51,49 +82,22 @@ export default function Sidebar({
       )}
 
       {/* SIDEBAR */}
-      <div
-        className={`
-          fixed top-0 left-0 z-50
-
-          ${
-            mobileOpen
-              ? "translate-x-0"
-              : "-translate-x-full md:translate-x-0"
-          }
-
-          ${collapsed ? "w-20" : "w-64"}
-
-          h-screen
-          backdrop-blur-xl
-
-          bg-white/80
-          dark:bg-[#020617]/90
-
-          border-r border-gray-200 dark:border-gray-700
-
-          transition-all duration-300
-          shadow-xl
-        `}
-      >
+      <div className={`
+        fixed top-0 left-0 z-50
+        ${mobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
+        ${collapsed ? "w-20" : "w-64"}
+        h-screen
+        backdrop-blur-xl
+        bg-white/80 dark:bg-[#020617]/90
+        border-r border-gray-200 dark:border-gray-700
+        transition-all duration-300 shadow-xl
+      `}>
 
         {/* TOP */}
-        <div
-          className="
-            h-16
-            flex items-center justify-between
-            px-4
-            border-b border-gray-200 dark:border-gray-700
-          "
-        >
+        <div className="h-16 flex items-center justify-between px-4 border-b border-gray-200 dark:border-gray-700">
 
-          {/* LOGO */}
           <div className="flex items-center gap-2">
-
-            <img
-              src={logo}
-              alt="logo"
-              className="w-9 h-9"
-            />
+            <img src={logo} className="w-9 h-9" alt="logo" />
 
             {!collapsed && (
               <h2 className="font-bold text-xl text-purple-600 dark:text-teal-400">
@@ -102,31 +106,18 @@ export default function Sidebar({
             )}
           </div>
 
-          {/* TOGGLES */}
           <div className="flex items-center gap-2">
-
-            {/* DESKTOP */}
             <PanelLeft
               size={20}
               onClick={() => setCollapsed(!collapsed)}
-              className="
-                hidden md:block
-                cursor-pointer
-                text-gray-700 dark:text-white
-              "
+              className="hidden md:block cursor-pointer text-gray-700 dark:text-white"
             />
 
-            {/* MOBILE */}
             <X
               size={20}
               onClick={() => setMobileOpen(false)}
-              className="
-                md:hidden
-                cursor-pointer
-                text-gray-700 dark:text-white
-              "
+              className="md:hidden cursor-pointer text-gray-700 dark:text-white"
             />
-
           </div>
         </div>
 
@@ -138,161 +129,63 @@ export default function Sidebar({
               key={i}
               to={item.path}
               onClick={() => setMobileOpen(false)}
-              className={({ isActive }) => `
-                flex items-center gap-3
-                px-3 py-3 rounded-xl
-
-                transition-all duration-200
-
+              className={({ isActive }) =>
+                `flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-200
                 ${
                   isActive
-                    ? `
-                      bg-gradient-to-r
-                      from-pink-500 to-purple-600
-                      dark:from-teal-500 dark:to-cyan-600
-
-                      text-white
-                      shadow-lg
-                    `
-                    : `
-                      text-gray-700 dark:text-gray-200
-                      hover:bg-pink-100
-                      dark:hover:bg-gray-800
-                    `
-                }
-              `}
+                    ? "bg-gradient-to-r from-pink-500 to-purple-600 dark:from-teal-500 dark:to-cyan-600 text-white shadow-lg"
+                    : "text-gray-700 dark:text-gray-200 hover:bg-pink-100 dark:hover:bg-gray-800"
+                }`
+              }
             >
-
-              <div>{item.icon}</div>
+              {item.icon}
 
               {!collapsed && (
                 <span className="font-medium text-sm">
                   {item.name}
                 </span>
               )}
-
             </NavLink>
           ))}
 
         </div>
 
-        {/* FOOTER / AUTH */}
+        {/* FOOTER */}
         {!collapsed && (
-
           <div className="absolute bottom-5 left-4 right-4">
 
-            {/* NOT LOGGED IN */}
-            {!user ? (
+            {/* USER CARD */}
+            <div className="p-4 rounded-2xl bg-gradient-to-r from-pink-500 to-purple-600 dark:from-teal-500 dark:to-cyan-600 text-white shadow-xl flex items-center justify-between">
 
-              <div className="flex flex-col gap-3">
-
-                {/* LOGIN */}
-                <NavLink
-                  to="/login"
-                  className="
-                    w-full py-3 rounded-xl
-                    text-center font-semibold
-
-                    bg-gradient-to-r
-                    from-pink-500 to-purple-600
-                    dark:from-teal-500 dark:to-cyan-600
-
-                    text-white
-                    shadow-lg
-
-                    hover:scale-105
-                    transition
-                  "
-                >
-                  Login
-                </NavLink>
-
-                {/* REGISTER */}
-                <NavLink
-                  to="/register"
-                  className="
-                    w-full py-3 rounded-xl
-                    text-center font-semibold
-
-                    border-2
-                    border-purple-500
-                    dark:border-teal-400
-
-                    text-purple-600
-                    dark:text-teal-300
-
-                    hover:bg-purple-500
-                    hover:text-white
-
-                    dark:hover:bg-teal-500
-
-                    transition
-                  "
-                >
-                  Sign Up
-                </NavLink>
-
+              {/* USER INFO */}
+              <div>
+                <h3 className="font-bold text-sm">
+                  {user?.name || "Guest"}
+                </h3>
+                <p className="text-xs opacity-80">
+                  {user ? "Logged In" : "Not Logged In"}
+                </p>
               </div>
 
-            ) : (
-
-              /* LOGGED IN */
-              <div
-                className="
-                  p-4 rounded-2xl
-
-                  bg-gradient-to-r
-                  from-pink-500 to-purple-600
-                  dark:from-teal-500 dark:to-cyan-600
-
-                  text-white
-                  shadow-xl
-
-                  flex items-center justify-between
-                "
-              >
-
-                {/* USER NAME */}
-                <div>
-
-                  <h3 className="font-bold text-sm">
-                    {user?.name || "User"}
-                  </h3>
-
-                  <p className="text-xs opacity-90">
-                    Logged In
-                  </p>
-
-                </div>
-
-                {/* LOGOUT */}
+              {/* LOGOUT BUTTON */}
+              {user && (
                 <button
-                onClick={() => {
-                    localStorage.removeItem("user");
-                        navigate("/login");
-                   }}
-                  
+                  onClick={handleLogout}
                   className="
                     px-3 py-1 rounded-lg
-
                     bg-black/20
-
                     text-xs font-medium
-
                     hover:bg-black/30
-
                     transition
                   "
                 >
                   Logout
                 </button>
+              )}
 
-              </div>
-
-            )}
+            </div>
 
           </div>
-
         )}
 
       </div>
