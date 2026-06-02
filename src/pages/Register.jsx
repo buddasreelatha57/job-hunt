@@ -8,9 +8,7 @@ import {
 
 import {
   Eye,
-  EyeOff,
-  Smartphone,
-  ShieldCheck
+  EyeOff
 } from "lucide-react";
 
 export default function Register() {
@@ -33,108 +31,10 @@ export default function Register() {
     setShowPassword] =
     useState(false);
 
-  const [otp, setOtp] =
-    useState("");
-
-  const [otpSent,
-    setOtpSent] =
-    useState(false);
-
-  const [verified,
-    setVerified] =
-    useState(false);
-
-  // ================= SEND OTP =================
-  const sendOTP = async () => {
-
-    try {
-
-      if (!form.telegramPhone) {
-        return alert(
-          "Enter Telegram Number"
-        );
-      }
-
-      const res = await axios.post(
-        "https://job-hunt-kpht.onrender.com/send-otp",
-        {
-          phone: form.telegramPhone
-        }
-      );
-
-      console.log(
-        "SEND OTP RESPONSE:",
-        res.data
-      );
-
-      // SHOW OTP INPUT
-      setOtpSent(true);
-
-      alert(
-        res.data.message ||
-        "OTP Sent Successfully 🚀"
-      );
-
-    } catch (err) {
-
-      console.log(err);
-
-      alert(
-        err?.response?.data?.message ||
-        "Failed To Send OTP"
-      );
-
-    }
-  };
-
-  // ================= VERIFY OTP =================
-  const verifyOTP = async () => {
-
-    try {
-
-      const res = await axios.post(
-        "https://job-hunt-kpht.onrender.com/verify-otp",
-        {
-          phone: form.telegramPhone,
-          code: otp
-        }
-      );
-
-      console.log(
-        "VERIFY RESPONSE:",
-        res.data
-      );
-
-      setVerified(true);
-
-      alert(
-        "Telegram Verified ✅"
-      );
-
-    } catch (err) {
-
-      console.log(err);
-
-      alert(
-        err?.response?.data?.message ||
-        "OTP Verification Failed"
-      );
-
-    }
-  };
-
   // ================= REGISTER =================
   const handleRegister = async () => {
 
     try {
-
-      if (!verified) {
-
-        return alert(
-          "Please Verify Telegram First"
-        );
-
-      }
 
       setLoading(true);
 
@@ -445,7 +345,7 @@ export default function Register() {
 
         </div>
 
-        {/* TELEGRAM SECTION */}
+        {/* TELEGRAM NUMBER OPTIONAL */}
         <div
           className="
             mb-6
@@ -462,29 +362,17 @@ export default function Register() {
           "
         >
 
-          <div className="flex items-center gap-2 mb-3">
+          <h3
+            className="
+              font-semibold
+              text-gray-700
+              dark:text-white
+              mb-3
+            "
+          >
+            Telegram Number (Optional)
+          </h3>
 
-            <Smartphone
-              size={18}
-              className="
-                text-pink-500
-                dark:text-teal-400
-              "
-            />
-
-            <h3
-              className="
-                font-semibold
-                text-gray-700
-                dark:text-white
-              "
-            >
-              Telegram Verification
-            </h3>
-
-          </div>
-
-          {/* PHONE */}
           <input
             type="text"
             value={form.telegramPhone}
@@ -492,7 +380,6 @@ export default function Register() {
             className="
               w-full
               p-4
-              mb-3
 
               rounded-2xl
 
@@ -515,110 +402,6 @@ export default function Register() {
               })
             }
           />
-
-          {/* SEND OTP */}
-          {!otpSent && (
-
-            <button
-              onClick={sendOTP}
-              className="
-                w-full
-                py-3
-
-                rounded-xl
-
-                text-white
-                font-semibold
-
-                bg-gradient-to-r
-                from-pink-500
-                to-purple-600
-
-                dark:from-teal-500
-                dark:to-cyan-500
-              "
-            >
-              Send OTP
-            </button>
-
-          )}
-
-          {/* OTP BOX */}
-          {otpSent && !verified && (
-
-            <div>
-
-              <input
-                value={otp}
-                placeholder="Enter OTP"
-                className="
-                  w-full
-                  p-4
-                  mt-3
-
-                  rounded-2xl
-
-                  bg-white/50
-                  dark:bg-white/10
-
-                  border
-                  border-white/20
-
-                  outline-none
-
-                  text-black
-                  dark:text-white
-                "
-                onChange={(e) =>
-                  setOtp(e.target.value)
-                }
-              />
-
-              <button
-                onClick={verifyOTP}
-                className="
-                  w-full
-                  py-3
-                  mt-3
-
-                  rounded-xl
-
-                  text-white
-                  font-semibold
-
-                  bg-green-500
-                "
-              >
-                Verify OTP
-              </button>
-
-            </div>
-
-          )}
-
-          {/* VERIFIED */}
-          {verified && (
-
-            <div
-              className="
-                mt-4
-
-                flex
-                items-center
-                gap-2
-
-                text-green-600
-                font-semibold
-              "
-            >
-
-              <ShieldCheck size={18} />
-
-              Telegram Verified
-
-            </div>
-
-          )}
 
         </div>
 
