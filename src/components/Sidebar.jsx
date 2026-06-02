@@ -1,5 +1,5 @@
 
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import {
   User,
   Briefcase,
@@ -19,6 +19,8 @@ export default function Sidebar({
   collapsed,
   setCollapsed
 }) {
+
+  const navigate = useNavigate();
 
   // SAFE USER
   let user = null;
@@ -265,10 +267,11 @@ export default function Sidebar({
 
                 {/* LOGOUT */}
                 <button
-                  onClick={() => {
+                onClick={() => {
                     localStorage.removeItem("user");
-                    window.location.href = "/login";
-                  }}
+                        navigate("/login");
+                   }}
+                  
                   className="
                     px-3 py-1 rounded-lg
 
